@@ -36,13 +36,13 @@ For this project, you will have a number of Azure resources used for common conc
 1. Navigate to the [Azure portal](https://portal.azure.com/)
 1. Create a new Resource Group to hold all of your Order Management Azure resources. ***NOTE: The Subscription, Resource Group, and Region used/created in this step should be used for all other resources being creating***
     * Subscription: Your subscription
-    * Name: order-management-\[uniquename\]-rg
+    * Name: order-management-[uniquename]-rg
 1. Create a new Log Analytics Workspace to hold all of your logs
-    * Name: order-management-\[uniquename\]-log
+    * Name: order-management-[uniquename]-log
 1. Create an Application Insights resource to capture application logs and metrics
-    * Name: order-management-\[uniquename\]-ai
+    * Name: order-management-[uniquename]-ai
     * Resource Mode: Workspace-based
-    * Log Analytics Workspace: order-management-\[uniquename\]-log
+    * Log Analytics Workspace: order-management-[uniquename]-log
 1. Create a Storage Account to hold files and assets
     * Name: ordermanagement[uniquename]st
     * Redundancy: Locally-redundant storage (LRS)
@@ -100,11 +100,13 @@ The Customer API is a Spring API that interacts with Customer database to track 
 
 1. Provision and deploy the Customer API
     1. In the [Azure Portal](https://portal.azure.com), create an Azure App Service Web App
-        * Name: customer-api-[uniquename]-app
-        * Runtime stack: Java 11
-        * Linux Plan: Create New
+        * Basics > Name: customer-api-[uniquename]-app
+        * Basics > Runtime stack: Java 11
+        * Basics > Linux Plan: Create New
             * Name: customer-api-plan
-        * Sku and size: Dev/Test B1
+        * Basics > Sku and size: Dev/Test B1
+        * Monitoring > Enable Application Insights: Yes
+        * Monitoring > Application Insights > order-management-[uniquename]-ai
     1. Update the Web App settings with the database information
         1. Navigate to the App Service Web App
         1. In the side menu, select ***Settings > Configuration*** and add the following Application Settings
@@ -143,3 +145,15 @@ The Customer API is a Spring API that interacts with Customer database to track 
         1. Refresh the Order Management App to show the list of customers
 
 ## Deploy the Order API and Database
+
+The Order API will be created using Azure Functions to expose a set of endpoints for creating orders and viewing their status. All Order data will be stored in an Azure Cosmos Database.
+
+1. Provision the resources in Azure
+    1. In the [Azure Portal](https://portal.azure.com), create a Function App
+        * Basics > Function App Name: order-api-[uniquename]-func
+        * Basics > Runtime stack: Java
+        * Basics > Version: 11.0
+        * Hosting > Storage Account: ordermanagement[uniquename]st
+        * Monitoring > Application Insights: order-management-[uniquename]-ai
+    2. In the [Azure Portal](https://portal.azure.com), create a Cosmos Account
+        *
