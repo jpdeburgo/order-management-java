@@ -384,8 +384,8 @@ The Order processing pipeline will use system events to process the orders at th
 
         for (Order order : orders) {
             if (order.paymentTimestamp == null) {
-                order.tax = order.quantity * order.unitPrice * 0.08;
-                order.total = order.quantity * order.unitPrice + order.tax;
+                order.tax = Math.round(order.quantity * order.unitPrice * 0.08 * 100.0) / 100.0;
+                order.total = Math.round(order.quantity * order.unitPrice + order.tax * 100.0) / 100.0;
                 order.paymentTimestamp = Instant.now().toString();
                 context.getLogger().info("Processing payment for order " + order.id);
 
