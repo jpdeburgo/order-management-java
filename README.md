@@ -29,6 +29,9 @@ To work effectively you'll need a fully functioning development environment. To 
 1. In GitHub, create a new branch with your name or a custom identifier.
 1. Go to ***Code > New codespace*** to open up a development environment for your new branch.
 
+
+<img src="./assets/images/createcodespace.gif" width="400px" >
+
 ## Set Up common Azure Resources
 
 For this project, you will have a number of Azure resources used for common concerns such as logging and file storage. In this section, we will set up those common resources so they can be used later in our project.
