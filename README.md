@@ -216,7 +216,7 @@ The Order API will be created using Azure Functions to expose a set of endpoints
             public Double tax;
             public Double total;
             public String createdTimestamp;
-            public String billedTimestamp;
+            public String paymentTimestamp;
             public String shippedTimestamp;
         }
         ```
@@ -306,3 +306,131 @@ The Order API will be created using Azure Functions to expose a set of endpoints
             return request.createResponseBuilder(HttpStatus.OK).body(orders).build();
         }
         ```
+
+1. Deploy the Function App
+    1. Right click on the **order-management-func** folder and select **Deploy to Function App...**
+    1. When it completes select the **Upload settings** button to sync your local settings to the Function App's Application Settings
+1. Access the Order API through the Order Management App
+    1. Navigate to the Order Management App (<https://[storageaccountname>].z13.web.core.windows.net)
+    1. In the settings, add in the base URL for the Function App (<https://order-management-[uniquename>]-func.azurewebsites.net)
+    1. The navigate to the Customer section after it appears
+    1. Troubleshoot calls to the Customer APi
+        1. Open up the developer tools in your browser (F12) to troubleshoot the problem
+            1. Note the [CORS error](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors)
+        1. Navigate to the Function App in the [Azure Portal](https://portal.azure.com)
+        1. In the side menu, select **API > CORS** and add * to the list of Allowed Origins
+            1. Note, it will take a few minutes for this update to occur once you save
+        1. Refresh the Order Management App to show the list of customers
+
+## Deploy the Order Processing Pipeline
+
+The Order processing pipeline will use system events to process the orders at their various stages using the Cosmos DB change feed, Azure Functions, and Azure Event Grid.
+
+1. In the [Azure Portal](https://portal.azure.com), provision an Event Grid Topic in Azure
+    * Name: ship-orders-[uniquename]-topic
+1. In your Codespace, add an **order-management-func/src/main/java/com/function/models/EventData.java** model to handle publishing and subscribing to the Event Grid Topic
+
+    ```java
+    package com.function.models;
+
+    import java.time.Instant;
+    import java.util.UUID;
+    
+    public class EventData {
+        public String id = UUID.randomUUID().toString();
+        public String eventType = "OrderProcessed";
+        public String subject = "OrderProcessed";
+        public String eventTime = Instant.now().toString();
+        public String dataVersion = "1.0";
+        public Order data;
+    
+        public EventData(Order order) {
+            data = order;
+        }
+    }
+    ```
+
+1. Navigate to the **order-management-func/src/local.settings.json** file and add/update the following to the **values**
+
+    ```json
+    "EventGridTopicEndpoint": "https://ship-orders-[uniquename]-topic.[region].eventgrid.azure.net/api/events",
+    "EventGridTopicKey": "[key1]
+    ```
+
+1. Add a Cosmos triggered Function that executes when there are changes to the Orders Collection and processes payment
+
+    ```java
+    @FunctionName("ProcessOrderPayment")
+    public void processOrderPayment(
+        @CosmosDBTrigger(
+            name = "ordersInput",
+            databaseName = "%DatabaseName%",
+            collectionName = "%CollectionName%",
+            leaseCollectionName = "leases",
+            createLeaseCollectionIfNotExists = true,
+            connectionStringSetting = "CosmosConnectionString") Order[] orders,
+        @CosmosDBOutput(
+            name = "ordersOutput",
+            databaseName = "%DatabaseName%",
+            collectionName = "%CollectionName%",
+            connectionStringSetting = "CosmosConnectionString") OutputBinding<List<Order>> outputOrders,
+        @EventGridOutput(
+            name = "eventOutput",
+            topicEndpointUri = "EventGridTopicEndpoint",
+            topicKeySetting = "EventGridTopicKey") OutputBinding<List<EventData>> outputEvents,
+        final ExecutionContext context ) {
+        List<Order> updatedOrders = new ArrayList<Order>();
+        List<EventData> events = new ArrayList<EventData>();
+
+        for (Order order : orders) {
+            if (order.paymentTimestamp == null) {
+                order.tax = order.quantity * order.unitPrice * 0.08;
+                order.total = order.quantity * order.unitPrice + order.tax;
+                order.paymentTimestamp = Instant.now().toString();
+                context.getLogger().info("Processing payment for order " + order.id);
+
+                updatedOrders.add(order);
+                events.add(new EventData(order));
+            }
+        }
+
+        outputOrders.setValue(updatedOrders);
+        outputEvents.setValue(events);
+    }
+    ```
+
+1. Add an Event Grid triggered Function that executes when there are shipping events to process
+
+    ```java
+    @FunctionName("ShipOrder")
+    public void shipOrder(
+        @EventGridTrigger(name = "shipevent") EventData event,
+        @CosmosDBOutput(
+            name = "ordersOutput",
+            databaseName = "%DatabaseName%",
+            collectionName = "%CollectionName%",
+            connectionStringSetting = "CosmosConnectionString") OutputBinding<Order> outputOrder,
+        final ExecutionContext context ) {
+        final Order order = event.data;
+        order.shippedTimestamp = Instant.now().toString();
+
+        context.getLogger().info("Shipping order " + order.id);
+
+        outputOrder.setValue(order);
+    }
+    ```
+
+1. Deploy the new version of the Function App to Azure
+    1. In the VS Code Azure Extension Functions section, select the **Deploy to Function App...** button (Cloud with up arrow)
+    1. When it completes select the **Upload settings** button to sync your local settings to the Function App's Application Settings
+
+1. Create the Event Grid Subscription for the ShipOrder Function
+    1. In the [Azure Portal](https://portal.azure.com), navigate to your Event Grid Topic
+    1. Select **+ Event Subscription**
+        * Name: ship-sub
+        * Endpoint Type: Azure Function
+        * Select an endpoint
+
+1. Navigate to the Order Management App and create all the customers and orders you want!
+
+1.
