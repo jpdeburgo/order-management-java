@@ -20,7 +20,7 @@ To accomplish this task, you will work through the following steps:
 
 ## Repository Setup
 
-If the origin repository has not been forked into your personal GitHub account or your orgnaization's GitHub Organization, please do so before completing any additional steps.
+If the origin repository has not been [forked into your personal GitHub account or your orgnaization's GitHub Organization](https://github.com/joelwaymack/order-management-java/fork), please do so before completing any additional steps.
 
 ## Dev Environment Setup
 
@@ -28,6 +28,9 @@ To work effectively you'll need a fully functioning development environment. To 
 
 1. In GitHub, create a new branch with your name or a custom identifier.
 1. Go to **Code > New codespace** to open up a development environment for your new branch.
+
+
+<img src="./assets/images/createcodespace.gif" width="400px" >
 
 ## Set Up common Azure Resources
 
