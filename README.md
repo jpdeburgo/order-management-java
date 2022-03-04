@@ -20,7 +20,7 @@ To accomplish this task, you will work through the following steps:
 
 ## Repository Setup
 
-If the origin repository has not been forked into your personal GitHub account or your orgnaization's GitHub Organization, please do so before completing any additional steps.
+If the origin repository has not been [forked into your personal GitHub account or your orgnaization's GitHub Organization](https://github.com/joelwaymack/order-management-java/fork), please do so before completing any additional steps.
 
 ## Dev Environment Setup
 
