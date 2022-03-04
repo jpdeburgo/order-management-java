@@ -13,7 +13,7 @@ content-type: application/json
 
 ### Create an order
 POST http://localhost:7071/api/customers/{{$guid}}/orders HTTP/1.1
-content-type: application/json
+Content-Type: application/json
 
 {
   "itemName": "Doll",
@@ -23,3 +23,29 @@ content-type: application/json
 
 ### Get orders for a customer
 GET http://localhost:7071/api/customers/6706b97a-08f5-4e35-b7aa-8d0250b5b388/orders HTTP/1.1
+
+### Test the shipping function
+POST http://localhost:7071/runtime/webhooks/eventgrid?functionName=ShipOrder
+Content-Type: application/json
+aeg-event-type: Notification
+
+[{
+  "topic": "/subscriptions/{{$guid}}/resourceGroups/resource-group-name/providers/Microsoft.EventGrid",
+  "subject": "/custom-event",
+  "eventType": "CustomEvent",
+  "eventTime": "2018-01-23T17:02:19.6069787Z",
+  "id": "00000000-a73d-45b6-8e76-000000000000",
+  "data": {
+    "id": "{{$guid}}",
+    "customerId": "4210454a-a73d-45b6-8e76-8faf4abe206f",
+    "itemName": "Doll",
+    "quantity": 1,
+    "unitPrice": 14.95,
+    "tax": 1.196,
+    "total": 16.146,
+    "createdTimestamp": "2022-03-04T18:57:00.136938Z",
+    "paymentTimestamp": "2022-03-04T18:57:03.607049Z",
+  },
+  "dataVersion": "",
+  "metadataVersion": "1"
+}]

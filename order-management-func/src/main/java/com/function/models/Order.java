@@ -11,6 +11,6 @@ public class Order {
     public Double tax;
     public Double total;
     public String createdTimestamp;
-    public String billedTimestamp;
+    public String paymentTimestamp;
     public String shippedTimestamp;
 }
