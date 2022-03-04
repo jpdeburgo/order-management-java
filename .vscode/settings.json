@@ -1,3 +1,10 @@
 {
-    "appService.defaultWebAppToDeploy": "None"
+    "appService.defaultWebAppToDeploy": "None",
+    "azureFunctions.javaBuildTool": "maven",
+    "azureFunctions.deploySubpath": "order-management-func/target/azure-functions/order-management-func-1646344435969",
+    "azureFunctions.projectLanguage": "Java",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "package (functions)",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

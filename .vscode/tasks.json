@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "package (functions)",
+      "command": "mvn clean package",
+      "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/order-management-func"
+      }
+    },
+    {
+      "type": "func",
+      "command": "host start",
+      "problemMatcher": "$func-java-watch",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}/order-management-func/target/azure-functions/order-management-func-1646344435969"
+      },
+      "dependsOn": "package (functions)"
+    }
+  ]
+}
