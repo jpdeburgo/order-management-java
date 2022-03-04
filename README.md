@@ -27,14 +27,14 @@ If the origin repository has not been forked into your personal GitHub account o
 To work effectively you'll need a fully functioning development environment. To keep from having to install a lot of dependencies, a GitHub codespace has been configured for your use. (These steps assume that the original repo has been forked into your GitHub organization.) Follow the steps below to set up your environment:
 
 1. In GitHub, create a new branch with your name or a custom identifier.
-1. Go to ***Code > New codespace*** to open up a development environment for your new branch.
+1. Go to **Code > New codespace** to open up a development environment for your new branch.
 
 ## Set Up common Azure Resources
 
 For this project, you will have a number of Azure resources used for common concerns such as logging and file storage. In this section, we will set up those common resources so they can be used later in our project.
 
 1. Navigate to the [Azure portal](https://portal.azure.com/)
-1. Create a new Resource Group to hold all of your Order Management Azure resources. ***NOTE: The Subscription, Resource Group, and Region used/created in this step should be used for all other resources being creating***
+1. Create a new Resource Group to hold all of your Order Management Azure resources. **NOTE: The Subscription, Resource Group, and Region used/created in this step should be used for all other resources being creating**
     * Subscription: Your subscription
     * Name: order-management-[uniquename]-rg
 1. Create a new Log Analytics Workspace to hold all of your logs
@@ -53,7 +53,7 @@ The Order Management App is a Single Page Application (Angular) that has been tr
 
 1. Turn on Static Website hosting for your Storage Account
     1. In the [Azure Portal](https://portal.azure.com), navigate to your Storage Account
-    1. In the side menu select ***Data management > Static website***
+    1. In the side menu select **Data management > Static website**
     1. Toggle the Static website to **Enabled**
     1. Set the site information
         * Index document name: index.html
@@ -83,7 +83,7 @@ The Customer API is a Spring API that interacts with Customer database to track 
         * Backup storage redundancy: Locally-redundant backup storage
     1. Update the Customer database schema
         1. In the [Azure Portal](https://portal.azure.com), navigate to the Customer database
-        1. In the side menu, select ***Query editor***
+        1. In the side menu, select **Query editor**
         1. Try to log in with your credentials:
             * Login: customeradmin
             * Password: ABCD1234abcd!
@@ -109,13 +109,13 @@ The Customer API is a Spring API that interacts with Customer database to track 
         * Monitoring > Application Insights > order-management-[uniquename]-ai
     1. Update the Web App settings with the database information
         1. Navigate to the App Service Web App
-        1. In the side menu, select ***Settings > Configuration*** and add the following Application Settings
+        1. In the side menu, select **Settings > Configuration** and add the following Application Settings
             * DB_SERVER_NAME: customer-[uniquename]-sqlsvr
             * DB_NAME: customer-sqldb
             * DB_USERNAME: customeradmin
             * DB_PASSWORD: ABCD1234abcd!
     1. Deploy the Customer API to the Azure App Service Web App
-        1. In your Codespace, open up a new Terminal ***Terminal > New Terminal***
+        1. In your Codespace, open up a new Terminal **Terminal > New Terminal**
         1. In the terminal build the API with Maven
 
             ```bash
@@ -123,12 +123,12 @@ The Customer API is a Spring API that interacts with Customer database to track 
             mvnw package
             ```
 
-        1. In the file explorer, right click on ***customer-api > target > customer-api-0.0.1-SNAPSHOT.jar*** and select **Deploy to Web App**
+        1. In the file explorer, right click on **customer-api > target > customer-api-0.0.1-SNAPSHOT.jar** and select **Deploy to Web App**
         1. Select your Subscription and Web App
     1. Troubleshoot your Customer API
         1. Navigate to your Customer API in your browser (<https://customer-api-[uniquename>]-app.azurewebsites.net)
-        1. In the [Azure Portal](https://portal.azure.com), navigate to your App Service ***Monitoring > Log stream*** to identify the issue
-        1. In the Azure SQL Server resource, navigate to ***Security > Firewalls and virtual networks***
+        1. In the [Azure Portal](https://portal.azure.com), navigate to your App Service **Monitoring > Log stream** to identify the issue
+        1. In the Azure SQL Server resource, navigate to **Security > Firewalls and virtual networks**
             * Allow Azure services and resources to access this server: Yes
         1. Navigate to your Customer API again
 
@@ -140,7 +140,7 @@ The Customer API is a Spring API that interacts with Customer database to track 
         1. Open up the developer tools in your browser (F12) to troubleshoot the problem
             1. Note the [CORS error](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors)
         1. Navigate to the Customer API in the [Azure Portal](https://portal.azure.com)
-        1. In the side menu, select ***API > CORS*** and add * to the list of Allowed Origins
+        1. In the side menu, select **API > CORS** and add * to the list of Allowed Origins
             1. Note, it will take a few minutes for this update to occur once you save
         1. Refresh the Order Management App to show the list of customers
 
@@ -150,10 +150,159 @@ The Order API will be created using Azure Functions to expose a set of endpoints
 
 1. Provision the resources in Azure
     1. In the [Azure Portal](https://portal.azure.com), create a Function App
-        * Basics > Function App Name: order-api-[uniquename]-func
+        * Basics > Function App Name: order-management-[uniquename]-func
         * Basics > Runtime stack: Java
         * Basics > Version: 11.0
         * Hosting > Storage Account: ordermanagement[uniquename]st
         * Monitoring > Application Insights: order-management-[uniquename]-ai
-    2. In the [Azure Portal](https://portal.azure.com), create a Cosmos Account
-        *
+    1. In the [Azure Portal](https://portal.azure.com), create a Cosmos DB
+        * Core (SQL) API
+        * Account Name: order-management-[uniquename]-cosmos
+    1. Set up the Cosmos DB and containers
+        1. Navigate to the Cosmos DB
+        1. In the side menu, select **Data Explorer**
+        1. Select **New Container**
+            * Database id: OrderManagement
+            * Database throughput: Manual
+            * Container id: Orders
+            * Partition key: /id
+1. Create the Function App
+    1. Create a new folder named **order-management-func**
+    1. Select the Azure Extension in VS Code
+    1. In the Functions section, select **Create new project...** (Folder with lightning bolt button)
+        * Folder: /workspaces/order-management-java/order-management-func/
+        * Language: Java
+        * Version: Java 11
+        * Group Id: com.function
+        * Artifact Id: order-management-func
+        * Version: 1.0-SNAPSHOT
+        * Package Name: com.function
+        * App Name: order-management-[uniquename]-func
+    1. Select **F5** to have VS Code start the Function App
+    1. Select **Open in Browser** when the port forwarding notification pops up
+    1. Navigate to **/api/HttpExample** to see the response of the auto-generated function
+1. Organize the Function App and add connection information
+    1. Navigate to the **order-management-func/src/local.settings.json** file and add/update the following
+
+        ```json
+        {
+          "IsEncrypted": false,
+          "Values": {
+            "AzureWebJobsStorage": "[storage-account-connection-string]",
+            "FUNCTIONS_WORKER_RUNTIME": "java",
+            "CosmosConnectionString": "[cosmos-connection-string]",
+            "DatabaseName": "OrderManagement",
+            "Collection": "Orders"
+          }
+        }
+        ```
+
+    1. Create a **order-management-func/src/main/java/com/function/models** folder
+    1. Add a new file named **Order.java** to the models folder
+        * NOTE: For brevity, getters and setters are not being used
+
+        ```java
+        package com.function.models;
+    
+        import java.time.LocalDateTime;
+        import java.util.UUID;
+        
+        public class Order {
+            public UUID id;
+            public UUID customerId;
+            public String itemName;
+            public int quantity;
+            public double unitPrice;
+            public Double tax;
+            public Double total;
+            public String createdTimestamp;
+            public String billedTimestamp;
+            public String shippedTimestamp;
+        }
+        ```
+
+1. Create the Order Endpoints
+    * NOTE: You can test your API endpoints using the **assets/function.rest** file
+    1. Create a **order-management-func/src/main/java/com/function/handlers** folder
+    1. Move the **Function.java** file into the handlers folder
+    1. Rename **Function.java** to **OrderHandler.java**
+    1. Remove the **HttpExample** Function
+    1. Add an HTTP Function Trigger for **GetAllOrders** to handle a **GET /api/orders** request
+
+        ```java
+        @FunctionName("GetAllOrders")
+        public HttpResponseMessage getAllOrders(
+            @HttpTrigger(
+                name = "req",
+                methods = {HttpMethod.GET},
+                route = "orders",
+                authLevel = AuthorizationLevel.ANONYMOUS)
+                HttpRequestMessage<Optional<String>> request,
+            @CosmosDBInput(
+                name = "orders",
+                databaseName = "%DatabaseName%",
+                collectionName = "%CollectionName%",
+                connectionStringSetting = "CosmosConnectionString",
+                sqlQuery = "SELECT * FROM orders")
+                List<Order> orders,
+            final ExecutionContext context) {
+    
+            return request.createResponseBuilder(HttpStatus.OK).body(orders).build();
+        }
+        ```
+
+    1. Add an HTTP Function Trigger for **CreateOrder** to handle a **POST /api/customers/{customerId}/orders** request
+
+        ```java
+        @FunctionName("CreateOrder")
+        public HttpResponseMessage createOrder(
+            @HttpTrigger(
+                name = "req",
+                methods = {HttpMethod.POST},
+                route = "customers/{customerId}/orders",
+                authLevel = AuthorizationLevel.ANONYMOUS)
+                HttpRequestMessage<Order> request,
+            @BindingName("customerId") UUID customerId,
+            @CosmosDBOutput(
+                name = "orders",
+                databaseName = "%DatabaseName%",
+                collectionName = "%CollectionName%",
+                connectionStringSetting = "CosmosConnectionString")
+                OutputBinding<Order> orderOutput,
+            final ExecutionContext context) {
+    
+            context.getLogger().info("New order created for customer " + customerId);
+            final Order order = request.getBody();
+            order.customerId = customerId;
+            order.id = UUID.randomUUID();
+            order.createdTimestamp = Instant.now().toString();
+    
+            orderOutput.setValue(order);
+    
+            return request.createResponseBuilder(HttpStatus.OK).body(order).build();
+        }
+        ```
+
+    1. Add an HTTP Function Trigger for **GetCustomerOrders** to handle a **GET /api/customers/{customerId}/orders** request
+
+        ```java
+        @FunctionName("GetCustomerOrders")
+        public HttpResponseMessage getCustomerOrders(
+            @HttpTrigger(
+                name = "req",
+                methods = {HttpMethod.GET},
+                route = "customers/{customerId}/orders",
+                authLevel = AuthorizationLevel.ANONYMOUS)
+                HttpRequestMessage<Optional<String>> request,
+            @CosmosDBInput(
+                name = "orders",
+                databaseName = "%DatabaseName%",
+                collectionName = "%CollectionName%",
+                connectionStringSetting = "CosmosConnectionString",
+                sqlQuery = "SELECT * FROM orders where orders.customerId = {customerId}")
+                List<Order> orders,
+            final ExecutionContext context) {
+    
+            return request.createResponseBuilder(HttpStatus.OK).body(orders).build();
+        }
+        ```

@@ -1,0 +1,25 @@
+### Get all orders
+GET http://localhost:7071/api/orders HTTP/1.1
+
+### Create an order
+POST http://localhost:7071/api/customers/6706b97a-08f5-4e35-b7aa-8d0250b5b388/orders HTTP/1.1
+content-type: application/json
+
+{
+  "itemName": "Baseball",
+  "quantity": 3,
+  "unitPrice": 5.34
+}
+
+### Create an order
+POST http://localhost:7071/api/customers/{{$guid}}/orders HTTP/1.1
+content-type: application/json
+
+{
+  "itemName": "Doll",
+  "quantity": 1,
+  "unitPrice": 14.95
+}
+
+### Get orders for a customer
+GET http://localhost:7071/api/customers/6706b97a-08f5-4e35-b7aa-8d0250b5b388/orders HTTP/1.1
