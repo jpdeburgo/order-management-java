@@ -29,7 +29,6 @@ To work effectively you'll need a fully functioning development environment. To 
 1. In GitHub, create a new branch with your name or a custom identifier.
 1. Go to **Code > New codespace** to open up a development environment for your new branch.
 
-
 <img src="./assets/images/createcodespace.gif" width="400px" >
 
 ## Set Up common Azure Resources
@@ -435,5 +434,3 @@ The Order processing pipeline will use system events to process the orders at th
         * Select an endpoint
 
 1. Navigate to the Order Management App and create all the customers and orders you want!
-
-1.
