@@ -18,3 +18,6 @@ FROM mcr.microsoft.com/azure-functions/java:4-java11-core-tools
 # RUN apt-get update && curl -ssL https://raw.githubusercontent.com/microsoft/vscode-dev-containers/main/script-library/common-debian.sh -o /tmp/common-script.sh \
 #     && /bin/bash /tmp/common-script.sh "$INSTALL_ZSH" "$USERNAME" "$USER_UID" "$USER_GID" \
 #     && rm /tmp/common-script.sh 
+RUN apt-get update && apt-get install -y \
+  libsecret-1-0 \
+  && rm -rf /var/lib/apt/lists/*
