@@ -122,7 +122,7 @@ The Customer API is a Spring API that interacts with Customer database to track 
 
             ```bash
             cd customer-api
-            mvnw package
+            mvn package
             ```
 
         1. In the file explorer, right click on **customer-api > target > customer-api-0.0.1-SNAPSHOT.jar** and select **Deploy to Web App**
