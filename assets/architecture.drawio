@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Pct7ndDNtFHMMzXg30rl" name="Logical Architecture">
-        <mxGraphModel dx="1714" dy="1069" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1714" dy="732" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -82,8 +82,16 @@
                 <mxCell id="35" value="Order Ship Event&lt;br&gt;(Azure Event Grid)" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/azure2/integration/Event_Grid_Topics.svg;" parent="1" vertex="1">
                     <mxGeometry x="553" y="360" width="67" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="36" value="Logging and Metrics&lt;br&gt;(Application Insights)" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/azure2/management_governance/Application_Insights.svg;" vertex="1" parent="1">
-                    <mxGeometry x="312" y="487" width="44" height="63" as="geometry"/>
+                <mxCell id="38" style="edgeStyle=none;html=1;" parent="1" source="36" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="290" y="519" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="Logging and Metrics&lt;br&gt;(Application Insights)" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/azure2/management_governance/Application_Insights.svg;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="487" width="44" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Logging and Metrics&lt;br&gt;(Log Analytics)" style="aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/azure2/analytics/Log_Analytics_Workspaces.svg;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="486.5" width="64" height="64" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
